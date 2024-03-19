@@ -19,7 +19,7 @@ function detectColorScheme(){
     if (theme=="dark") {
          document.documentElement.setAttribute("data-theme", "dark");
     }
-    console.log('theme: ' + theme)
+    //console.log('theme: ' + theme)
 }
 detectColorScheme();
 
@@ -32,14 +32,14 @@ const btnToggleImg = document.querySelector('label[for="theme-toggle-button"] sv
 function switchTheme(e) {
     
     if (e.target.checked) {
-        console.log(toggleSwitch + " checked");
+        //console.log(toggleSwitch + " checked");
         localStorage.setItem('theme', 'dark');
         document.documentElement.setAttribute('data-theme', 'dark');
         toggleSwitch.checked = true;
         btnToggleText.innerText = "light";
         btnToggleImg.innerHTML = `<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg"><g fill-rule="nonzero"><path d="M13.545 6.455c-.9-.9-2.17-1.481-3.545-1.481a4.934 4.934 0 00-3.545 1.481c-.9.9-1.481 2.17-1.481 3.545 0 1.376.582 2.646 1.481 3.545.9.9 2.17 1.481 3.545 1.481a4.934 4.934 0 003.545-1.481c.9-.9 1.481-2.17 1.481-3.545a4.934 4.934 0 00-1.481-3.545zM10 3.413a.7.7 0 00.688-.688V.688A.7.7 0 0010 0a.7.7 0 00-.688.688v2.037a.7.7 0 00.688.688zM15.635 5.344l1.455-1.455a.67.67 0 000-.952.67.67 0 00-.952 0l-1.455 1.455a.67.67 0 000 .952c.238.264.66.264.952 0zM19.312 9.312h-2.037a.7.7 0 00-.688.688.7.7 0 00.688.688h2.037A.7.7 0 0020 10a.7.7 0 00-.688-.688zM15.608 14.656a.67.67 0 00-.952 0 .67.67 0 000 .952l1.455 1.455a.67.67 0 00.952 0 .67.67 0 000-.952l-1.455-1.455zM10 16.587a.7.7 0 00-.688.688v2.037A.7.7 0 0010 20a.7.7 0 00.688-.688v-2.037a.7.7 0 00-.688-.688zM4.365 14.656L2.91 16.111a.67.67 0 000 .952.67.67 0 00.952 0l1.455-1.455a.67.67 0 000-.952c-.238-.264-.66-.264-.952 0zM3.413 10a.7.7 0 00-.688-.688H.688A.7.7 0 000 10a.7.7 0 00.688.688h2.037A.7.7 0 003.413 10zM4.365 5.344a.67.67 0 00.952 0 .67.67 0 000-.952L3.862 2.937a.67.67 0 00-.952 0 .67.67 0 000 .952l1.455 1.455z"/></g></svg>`
     } else {
-        console.log(toggleSwitch + " unchecked");
+        //console.log(toggleSwitch + " unchecked");
         localStorage.setItem('theme', 'light');
         document.documentElement.setAttribute('data-theme', 'light');
         toggleSwitch.checked = false;
@@ -59,8 +59,10 @@ if (document.documentElement.getAttribute("data-theme") == "dark"){
 
 
 // === API === // 
-const btnSearch = document.querySelector('.search-button');
+//const btnSearch = document.querySelector('.search-button');
+const form = document.querySelector('#form');
 const inputName = document.querySelector('#name');
+const errorMessage = document.querySelector('#error');
 
 const resetFilds = () => {
 
@@ -144,25 +146,31 @@ const getContent = (data) => {
 
 }
 
-btnSearch.addEventListener('click', () => {
-   fetchData(); 
+form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if(inputName.value === ''){
+        errorMessage.classList.remove('hide');
+        return
+    }
+    fetchData();
+   
 })
 async function fetchData(){
     try{
         const response = await fetch(`https://api.github.com/users/${inputName.value}`)
 
         if(!response.ok){
-            if(document.querySelector('#error').classList.contains('hide')){
-                document.querySelector('#error').classList.remove('hide');
+            if(errorMessage.classList.contains('hide')){
+                errorMessage.classList.remove('hide');
             }
             resetFilds();
             throw new Error("Could not fetch resource")
         }
         const data = await response.json();
-        document.querySelector('#error').classList.add('hide');
+        errorMessage.classList.add('hide');
         getContent(data);        
 
-        console.log(data)
+        //console.log(data)
     }
     catch(error){
         console.log(error);
